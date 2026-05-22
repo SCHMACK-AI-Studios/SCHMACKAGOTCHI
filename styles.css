@@ -1207,6 +1207,27 @@ input:focus {
 
 /* ===== KEYFRAMES ===== */
 
+
+/* ── PNG Cat Sprite Canvas ────────────────────────────────────────────── */
+.cat-sprite-canvas {
+  position: absolute;
+  left: 0;
+  top: 0;
+  width: 120px;
+  height: 140px;
+  image-rendering: pixelated;
+  animation: cat-idle 1100ms steps(2) infinite;
+}
+
+.cat-sprite-canvas.reacting {
+  animation: cat-hop 500ms steps(2) 2;
+}
+
+/* When the whole shell is sleeping, dim the room (kept from before) */
+.is-sleeping .room {
+  filter: brightness(0.7) saturate(0.5);
+}
+/* ──────────────────────────────────────────────────────────────────────── */
 @keyframes cat-idle {
   0%, 100% { transform: translateY(0); }
   50%       { transform: translateY(4px); }
