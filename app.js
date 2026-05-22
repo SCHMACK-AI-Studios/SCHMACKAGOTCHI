@@ -9,7 +9,7 @@ _catSpriteImage.src = CAT_SPRITE_SRC;
  * state: "happy" | "sad" | "grumpy" | "sleeping"
  * reaction: bool
  */
-function drawCatSprite(canvas, visualState, isReacting) {
+function drawCatSprite(canvas, visualState, isReacting, isBlinking) {
   if (!canvas) return;
   const ctx = canvas.getContext("2d");
   ctx.imageSmoothingEnabled = false;
@@ -19,85 +19,133 @@ function drawCatSprite(canvas, visualState, isReacting) {
   ctx.clearRect(0, 0, W, H);
 
   if (!_catSpriteImage.complete || _catSpriteImage.naturalWidth === 0) {
-    _catSpriteImage.onload = () => drawCatSprite(canvas, visualState, isReacting);
+    _catSpriteImage.onload = () => drawCatSprite(canvas, visualState, isReacting, isBlinking);
     return;
   }
 
   const sw = _catSpriteImage.naturalWidth;
   const sh = _catSpriteImage.naturalHeight;
 
-  // State-based tint filters
-  ctx.save();
-  if (visualState === "sleeping") {
-    ctx.filter = "brightness(0.7) saturate(0.4)";
-  } else if (visualState === "grumpy") {
-    ctx.filter = "saturate(1.4) hue-rotate(-10deg)";
-  } else if (visualState === "sad") {
-    ctx.filter = "brightness(0.85) saturate(0.6)";
-  }
-
   ctx.drawImage(_catSpriteImage, 0, 0, sw, sh, 0, 0, W, H);
-  ctx.restore();
+  makeCatSpriteSolid(ctx, W, H);
+  drawCatFace(ctx, W, H, visualState, Boolean(isBlinking) && visualState !== "sleeping");
+}
 
-  // Sleeping: draw closed-eye bars
+function makeCatSpriteSolid(ctx, width, height) {
+  const imageData = ctx.getImageData(0, 0, width, height);
+  const pixels = imageData.data;
+  const ink = [17, 17, 17];
+  const white = [255, 253, 244];
+  const pink = [255, 122, 138];
+
+  for (let index = 0; index < pixels.length; index += 4) {
+    const alpha = pixels[index + 3];
+    if (alpha < 32) {
+      pixels[index + 3] = 0;
+      continue;
+    }
+
+    const red = pixels[index];
+    const green = pixels[index + 1];
+    const blue = pixels[index + 2];
+    const brightness = (red * 0.299) + (green * 0.587) + (blue * 0.114);
+    const isPink = red > 140 && red > green + 25 && red > blue + 10 && green < 190;
+    const color = isPink ? pink : brightness < 150 ? ink : white;
+
+    pixels[index] = color[0];
+    pixels[index + 1] = color[1];
+    pixels[index + 2] = color[2];
+    pixels[index + 3] = 255;
+  }
+
+  ctx.putImageData(imageData, 0, 0);
+}
+
+function drawCatFace(ctx, width, height, visualState, isBlinking) {
+  const scaleX = width / 120;
+  const scaleY = height / 140;
+  const ink = "#111111";
+  const white = "#fffdf4";
+  const red = "#e8242c";
+
+  function fill(color, x, y, w, h) {
+    ctx.fillStyle = color;
+    ctx.fillRect(Math.round(x * scaleX), Math.round(y * scaleY), Math.round(w * scaleX), Math.round(h * scaleY));
+  }
+
+  function drawOpenEyes() {
+    fill(ink, 43, 59, 7, 13);
+    fill(ink, 64, 59, 7, 13);
+  }
+
+  function drawClosedEyes() {
+    fill(ink, 40, 66, 14, 3);
+    fill(ink, 62, 66, 14, 3);
+  }
+
+  function drawNeutralMouth() {
+    fill("#ff7a8a", 56, 76, 5, 4);
+    fill(ink, 58, 80, 3, 5);
+    fill(ink, 52, 84, 6, 3);
+    fill(ink, 63, 84, 6, 3);
+  }
+
+  function drawDownturnedMouth() {
+    fill("#ff7a8a", 56, 76, 5, 4);
+    fill(ink, 57, 82, 8, 3);
+    fill(ink, 53, 85, 4, 3);
+    fill(ink, 65, 85, 4, 3);
+  }
+
+  function drawGrumpyBrows() {
+    fill(ink, 40, 54, 5, 3);
+    fill(ink, 45, 55, 5, 3);
+    fill(ink, 50, 56, 4, 3);
+    fill(ink, 61, 56, 4, 3);
+    fill(ink, 65, 55, 5, 3);
+    fill(ink, 70, 54, 5, 3);
+  }
+
+  function drawZ(x, y, size) {
+    fill(red, x, y, size * 5, size);
+    fill(red, x + (size * 3), y + size, size, size);
+    fill(red, x + (size * 2), y + (size * 2), size, size);
+    fill(red, x + size, y + (size * 3), size, size);
+    fill(red, x, y + (size * 4), size * 5, size);
+  }
+
+  fill(white, 39, 55, 16, 20);
+  fill(white, 61, 55, 16, 20);
+  fill(white, 50, 73, 22, 18);
+
   if (visualState === "sleeping") {
-    ctx.save();
-    ctx.fillStyle = "#1c1c1c";
-    // eye bar positions as proportion of canvas (tuned to sprite)
-    const eyeY  = H * 0.315;
-    const eyeH  = H * 0.025;
-    const lEyeX = W * 0.285, lEyeW = W * 0.14;
-    const rEyeX = W * 0.565, rEyeW = W * 0.14;
-    ctx.fillRect(lEyeX, eyeY, lEyeW, eyeH);
-    ctx.fillRect(rEyeX, eyeY, rEyeW, eyeH);
-    // ZZZ
-    ctx.filter = "none";
-    ctx.fillStyle = "#e8242c";
-    ctx.font = "bold " + Math.round(W * 0.12) + "px 'Press Start 2P', monospace";
-    ctx.fillText("z", W * 0.78, H * 0.18);
-    ctx.font = "bold " + Math.round(W * 0.09) + "px 'Press Start 2P', monospace";
-    ctx.fillText("z", W * 0.86, H * 0.10);
-    ctx.restore();
+    drawClosedEyes();
+    drawNeutralMouth();
+    drawZ(90, 16, 2);
+    drawZ(101, 7, 1.5);
+    return;
   }
 
-  // Grumpy: angry brow lines
-  if (visualState === "grumpy") {
-    ctx.save();
-    ctx.strokeStyle = "#1c1c1c";
-    ctx.lineWidth = Math.max(2, W * 0.025);
-    ctx.beginPath();
-    // left brow: slopes down-right (angry inward)
-    ctx.moveTo(W * 0.26, H * 0.245);
-    ctx.lineTo(W * 0.40, H * 0.265);
-    // right brow: slopes down-left
-    ctx.moveTo(W * 0.60, H * 0.265);
-    ctx.lineTo(W * 0.74, H * 0.245);
-    ctx.stroke();
-    // frown mouth
-    ctx.beginPath();
-    ctx.arc(W * 0.50, H * 0.54, W * 0.08, 0.25 * Math.PI, 0.75 * Math.PI, false);
-    ctx.stroke();
-    ctx.restore();
+  if (isBlinking) {
+    drawClosedEyes();
+  } else {
+    drawOpenEyes();
   }
 
-  // Sad: droopy brows + sad mouth
   if (visualState === "sad") {
-    ctx.save();
-    ctx.strokeStyle = "#1c1c1c";
-    ctx.lineWidth = Math.max(2, W * 0.025);
-    // brows slope downward on outer side
-    ctx.beginPath();
-    ctx.moveTo(W * 0.26, H * 0.265);
-    ctx.lineTo(W * 0.40, H * 0.245);
-    ctx.moveTo(W * 0.60, H * 0.245);
-    ctx.lineTo(W * 0.74, H * 0.265);
-    ctx.stroke();
-    // sad mouth arc
-    ctx.beginPath();
-    ctx.arc(W * 0.50, H * 0.56, W * 0.07, 1.25 * Math.PI, 1.75 * Math.PI, false);
-    ctx.stroke();
-    ctx.restore();
+    drawDownturnedMouth();
+    return;
   }
+
+  if (visualState === "grumpy") {
+    if (!isBlinking) {
+      drawGrumpyBrows();
+    }
+    drawDownturnedMouth();
+    return;
+  }
+
+  drawNeutralMouth();
 }
 
 /* ─────────────────────────────────────────────────────────────────────────── */
@@ -110,6 +158,7 @@ function drawCatSprite(canvas, visualState, isReacting) {
   const SLEEP_START_HOUR = 19;
   const HUNGER_DECAY_MS = 2 * 60 * 60 * 1000;
   const MAX_HEARTS = 5;
+  const STARTING_HUNGER = 3;
 
   const ACHIEVEMENTS = [
     "Earn a Braze certificate",
@@ -142,6 +191,9 @@ function drawCatSprite(canvas, visualState, isReacting) {
 
   let state = loadState();
   let rewardTimer = 0;
+  let blinkTimer = 0;
+  let blinkClearTimer = 0;
+  let catBlinking = false;
 
   function defaultState() {
     const now = new Date();
@@ -150,7 +202,7 @@ function drawCatSprite(canvas, visualState, isReacting) {
       dailyTaskText: "",
       todayTaskCompleted: false,
       achievementsCheckedToday: [],
-      hunger: MAX_HEARTS,
+      hunger: STARTING_HUNGER,
       happiness: 0,
       collectedToys: [],
       catNapActive: false,
@@ -762,18 +814,43 @@ function drawCatSprite(canvas, visualState, isReacting) {
     `;
   }
 
+  function paintCatSprites() {
+    document.querySelectorAll(".cat-sprite-canvas").forEach(function(canvas) {
+      const vs = canvas.dataset.visualState || "happy";
+      const reacting = canvas.classList.contains("reacting");
+      drawCatSprite(canvas, vs, reacting, catBlinking);
+    });
+  }
+
+  function scheduleCatBlink() {
+    window.clearTimeout(blinkTimer);
+    blinkTimer = window.setTimeout(() => {
+      const hasAwakeCat = Array.from(document.querySelectorAll(".cat-sprite-canvas"))
+        .some((canvas) => (canvas.dataset.visualState || "happy") !== "sleeping");
+
+      if (!hasAwakeCat) {
+        scheduleCatBlink();
+        return;
+      }
+
+      catBlinking = true;
+      paintCatSprites();
+      window.clearTimeout(blinkClearTimer);
+      blinkClearTimer = window.setTimeout(() => {
+        catBlinking = false;
+        paintCatSprites();
+        scheduleCatBlink();
+      }, 140);
+    }, 2600 + Math.random() * 2800);
+  }
+
   function render() {
     if (hasStarted()) {
       renderGame();
     } else {
       renderWelcome();
     }
-    // Paint sprite onto every cat canvas in the freshly-rendered DOM
-    document.querySelectorAll(".cat-sprite-canvas").forEach(function(canvas) {
-      const vs = canvas.dataset.visualState || "happy";
-      const reacting = canvas.classList.contains("reacting");
-      drawCatSprite(canvas, vs, reacting);
-    });
+    paintCatSprites();
   }
 
   app.addEventListener("submit", (event) => {
@@ -858,4 +935,5 @@ function drawCatSprite(canvas, visualState, isReacting) {
   }, 60 * 1000);
 
   render();
+  scheduleCatBlink();
 })();
