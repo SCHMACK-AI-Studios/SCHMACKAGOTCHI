@@ -315,7 +315,7 @@ input:focus {
 .cat-tree {
   position: absolute;
   right: 50px;
-  bottom: 130px;
+  bottom: 110px;
   width: 108px;
   height: 180px;
   pointer-events: none;
@@ -337,13 +337,13 @@ input:focus {
 .tree-post.tall {
   left: 52px;
   top: 28px;
-  height: 116px;
+  height: 128px;
 }
 
 .tree-post.short {
   left: 22px;
   top: 76px;
-  height: 68px;
+  height: 80px;
 }
 
 .tree-platform {
