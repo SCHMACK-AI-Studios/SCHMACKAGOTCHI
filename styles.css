@@ -321,7 +321,7 @@ input:focus {
   transform: translateX(-50%);
   background: #ff3347;
   border: 4px solid #111;
-  z-index: 1;
+  z-index: 0;
 }
 
 /* ===== CAT TREE ===== */
