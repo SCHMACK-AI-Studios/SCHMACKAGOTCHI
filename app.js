@@ -66,6 +66,7 @@ function drawCatFace(ctx, width, height, visualState, isBlinking) {
   const scaleY = height / 140;
   const ink = "#111111";
   const white = "#fffdf4";
+  const pink = "#ff7a8a";
   const red = "#e8242c";
 
   function fill(color, x, y, w, h) {
@@ -84,26 +85,17 @@ function drawCatFace(ctx, width, height, visualState, isBlinking) {
   }
 
   function drawNeutralMouth() {
-    fill("#ff7a8a", 56, 76, 5, 4);
-    fill(ink, 58, 80, 3, 5);
-    fill(ink, 52, 84, 6, 3);
-    fill(ink, 63, 84, 6, 3);
+    // The base sprite already has the cute neutral mouth.
   }
 
   function drawDownturnedMouth() {
-    fill("#ff7a8a", 56, 76, 5, 4);
-    fill(ink, 57, 82, 8, 3);
-    fill(ink, 53, 85, 4, 3);
-    fill(ink, 65, 85, 4, 3);
-  }
-
-  function drawGrumpyBrows() {
-    fill(ink, 40, 54, 5, 3);
-    fill(ink, 45, 55, 5, 3);
-    fill(ink, 50, 56, 4, 3);
-    fill(ink, 61, 56, 4, 3);
-    fill(ink, 65, 55, 5, 3);
-    fill(ink, 70, 54, 5, 3);
+    fill(white, 49, 73, 24, 18);
+    drawLowerFaceOutline();
+    drawNose();
+    fill(ink, 59, 80, 2, 5);
+    fill(ink, 55, 83, 11, 2);
+    fill(ink, 52, 85, 5, 2);
+    fill(ink, 66, 85, 5, 2);
   }
 
   function drawZ(x, y, size) {
@@ -114,9 +106,23 @@ function drawCatFace(ctx, width, height, visualState, isBlinking) {
     fill(red, x, y + (size * 4), size * 5, size);
   }
 
+  function drawNose() {
+    fill(ink, 55, 75, 8, 3);
+    fill(ink, 56, 78, 6, 3);
+    fill(pink, 57, 76, 4, 3);
+  }
+
+  function drawLowerFaceOutline() {
+    fill(ink, 39, 79, 4, 8);
+    fill(ink, 43, 86, 6, 3);
+    fill(ink, 49, 89, 6, 3);
+    fill(ink, 65, 89, 6, 3);
+    fill(ink, 69, 86, 6, 3);
+    fill(ink, 76, 79, 4, 8);
+  }
+
   fill(white, 39, 55, 16, 20);
   fill(white, 61, 55, 16, 20);
-  fill(white, 50, 73, 22, 18);
 
   if (visualState === "sleeping") {
     drawClosedEyes();
@@ -138,9 +144,6 @@ function drawCatFace(ctx, width, height, visualState, isBlinking) {
   }
 
   if (visualState === "grumpy") {
-    if (!isBlinking) {
-      drawGrumpyBrows();
-    }
     drawDownturnedMouth();
     return;
   }
