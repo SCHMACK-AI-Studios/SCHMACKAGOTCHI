@@ -603,7 +603,7 @@ function drawCatFace(ctx, width, height, visualState, isBlinking) {
             <span class="tree-platform middle"></span>
             <span class="tree-base"></span>
           </div>
-          <div class="rug" aria-hidden="true"></div>
+          <div class="rug"></div>
           ${renderCat()}
           <div class="room-toys">${roomToys}</div>
           <div class="bowl food-bowl ${hasFood}" aria-label="Food bowl">
