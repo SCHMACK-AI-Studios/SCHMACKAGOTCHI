@@ -681,6 +681,7 @@ input:focus {
 
 .cat-zone {
   position: absolute;
+  z-index: 2;
   width: 156px;
   height: 138px;
   left: 50%;
