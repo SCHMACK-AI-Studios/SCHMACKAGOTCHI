@@ -902,7 +902,7 @@ input:focus {
   display: flex;
   justify-content: center;
   gap: 12px;
-  min-height: 42px;
+  min-height: 18px;
   pointer-events: none;
 }
 
