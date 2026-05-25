@@ -89,13 +89,16 @@ function drawCatFace(ctx, width, height, visualState, isBlinking) {
   }
 
   function drawDownturnedMouth() {
+    const mouthCenterX = 58;
+    const mouthY = 82;
+
     fill(white, 49, 73, 24, 18);
     drawLowerFaceOutline();
     drawNose();
-    fill(ink, 59, 80, 2, 5);
-    fill(ink, 55, 83, 11, 2);
-    fill(ink, 52, 85, 5, 2);
-    fill(ink, 66, 85, 5, 2);
+    fill(ink, mouthCenterX - 1, mouthY - 4, 2, 5);
+    fill(ink, mouthCenterX - 5, mouthY - 1, 11, 2);
+    fill(ink, mouthCenterX - 8, mouthY + 1, 5, 2);
+    fill(ink, mouthCenterX + 6, mouthY + 1, 5, 2);
   }
 
   function drawZ(x, y, size) {
@@ -107,9 +110,9 @@ function drawCatFace(ctx, width, height, visualState, isBlinking) {
   }
 
   function drawNose() {
-    fill(ink, 55, 75, 8, 3);
-    fill(ink, 56, 78, 6, 3);
-    fill(pink, 57, 76, 4, 3);
+    fill(ink, 54, 72, 8, 3);
+    fill(ink, 55, 75, 6, 3);
+    fill(pink, 56, 73, 4, 3);
   }
 
   function drawLowerFaceOutline() {
@@ -162,6 +165,8 @@ function drawCatFace(ctx, width, height, visualState, isBlinking) {
   const HUNGER_DECAY_MS = 2 * 60 * 60 * 1000;
   const MAX_HEARTS = 5;
   const STARTING_HUNGER = 3;
+  const GAME_DESIGN_WIDTH = 1140;
+  const GAME_DESIGN_HEIGHT = 900;
 
   const ACHIEVEMENTS = [
     "Earn a Braze certificate",
@@ -185,6 +190,7 @@ function drawCatFace(ctx, width, height, visualState, isBlinking) {
   const ui = {
     editingTask: false,
     optionsOpen: false,
+    instructionsOpen: false,
     confirmReset: false,
     reward: null,
     reaction: false,
@@ -290,15 +296,29 @@ function drawCatFace(ctx, width, height, visualState, isBlinking) {
     return localDateKey(resetBoundaryFor(date));
   }
 
+  function isWeekend(date) {
+    const day = date.getDay();
+    return day === 0 || day === 6;
+  }
+
   function isAwakeAt(date) {
+    if (isWeekend(date)) {
+      return false;
+    }
     const hour = date.getHours();
     return hour >= AWAKE_START_HOUR && hour < SLEEP_START_HOUR;
   }
 
   function awakeWindowFor(date) {
     const start = new Date(date);
-    start.setHours(AWAKE_START_HOUR, 0, 0, 0);
     const end = new Date(date);
+    if (isWeekend(date)) {
+      start.setHours(0, 0, 0, 0);
+      end.setHours(0, 0, 0, 0);
+      return { start, end };
+    }
+
+    start.setHours(AWAKE_START_HOUR, 0, 0, 0);
     end.setHours(SLEEP_START_HOUR, 0, 0, 0);
     return { start, end };
   }
@@ -493,6 +513,7 @@ function drawCatFace(ctx, width, height, visualState, isBlinking) {
     state = defaultState();
     ui.editingTask = false;
     ui.optionsOpen = false;
+    ui.instructionsOpen = false;
     ui.confirmReset = false;
     ui.reward = null;
     ui.reaction = false;
@@ -532,6 +553,9 @@ function drawCatFace(ctx, width, height, visualState, isBlinking) {
   function statusText() {
     if (state.catNapActive) {
       return "CAT NAP MODE";
+    }
+    if (isWeekend(ui.now)) {
+      return "SLEEPING FOR WEEKEND";
     }
     if (!isAwakeAt(ui.now)) {
       return "SLEEPING UNTIL 8:00AM";
@@ -730,6 +754,35 @@ function drawCatFace(ctx, width, height, visualState, isBlinking) {
     `;
   }
 
+  function renderInstructionsMenu() {
+    if (!ui.instructionsOpen) {
+      return "";
+    }
+
+    return `
+      <div class="menu-scrim" role="presentation">
+        <section class="menu-dialog instructions-dialog" role="dialog" aria-modal="true" aria-label="Instructions">
+          <h2>INSTRUCTIONS</h2>
+          <div class="menu-section">
+            <h3>FEED YOUR PET</h3>
+            <p>Check off your task of the day to earn a can of cat food! This will be enough to fill up its hunger metre, but beware, it will deplete slowly throughout the day.</p>
+          </div>
+          <div class="menu-section">
+            <h3>GIVE YOUR PET TOYS</h3>
+            <p>Ticking off an achievement earns a toy! There are 5 to collect in total and each increases your happiness metre. Achievements reset every day.</p>
+          </div>
+          <div class="menu-section">
+            <h3>WANT TO CHANGE YOUR DAILY TASK?</h3>
+            <p>You can edit your task by clicking on the pencil icon beside it.</p>
+          </div>
+          <div class="menu-actions">
+            <button type="button" data-action="close-instructions">CLOSE</button>
+          </div>
+        </section>
+      </div>
+    `;
+  }
+
   function renderReward() {
     if (!ui.reward) {
       return "";
@@ -757,26 +810,47 @@ function drawCatFace(ctx, width, height, visualState, isBlinking) {
     `;
   }
 
+  function updateLayoutScale() {
+    const margin = window.innerWidth < 760 ? 16 : 32;
+    const availableWidth = Math.max(1, window.innerWidth - margin);
+    const availableHeight = Math.max(1, window.innerHeight - margin);
+    const scale = Math.min(
+      1,
+      availableWidth / GAME_DESIGN_WIDTH,
+      availableHeight / GAME_DESIGN_HEIGHT
+    );
+    document.documentElement.style.setProperty("--game-scale", scale.toFixed(4));
+    document.documentElement.style.setProperty("--game-frame-width", `${(GAME_DESIGN_WIDTH * scale).toFixed(2)}px`);
+    document.documentElement.style.setProperty("--game-frame-height", `${(GAME_DESIGN_HEIGHT * scale).toFixed(2)}px`);
+  }
+
   function renderGame() {
+    updateLayoutScale();
     syncClock();
     const sleepingClass = catVisualState() === "sleeping" ? "is-sleeping" : "";
 
     app.innerHTML = `
       <main class="app-shell ${sleepingClass}">
-        <div class="game-screen">
-          <header class="title-block">
-            <h1>SCHMACKAGOTCHI</h1>
-            <span class="sub-status">${escapeHtml(statusText())}</span>
-          </header>
-          ${renderRoom()}
-          <aside class="side-panel">
-            ${renderTaskPanel()}
-            ${renderAchievementsPanel()}
-          </aside>
-          ${renderMeters()}
-          <button class="options-button" type="button" data-action="open-options">OPTIONS</button>
-          ${renderReward()}
-          ${renderOptionsMenu()}
+        <div class="game-scale-frame">
+          <div class="game-screen">
+            <header class="title-block">
+              <h1>SCHMACKAGOTCHI</h1>
+              <span class="sub-status">${escapeHtml(statusText())}</span>
+            </header>
+            ${renderRoom()}
+            <aside class="side-panel">
+              ${renderTaskPanel()}
+              ${renderAchievementsPanel()}
+            </aside>
+            ${renderMeters()}
+            <div class="bottom-actions">
+              <button class="instructions-button" type="button" data-action="open-instructions">INSTRUCTIONS</button>
+              <button class="options-button" type="button" data-action="open-options">OPTIONS</button>
+            </div>
+            ${renderReward()}
+            ${renderInstructionsMenu()}
+            ${renderOptionsMenu()}
+          </div>
         </div>
       </main>
     `;
@@ -895,12 +969,23 @@ function drawCatFace(ctx, width, height, visualState, isBlinking) {
     }
     if (action === "open-options") {
       ui.optionsOpen = true;
+      ui.instructionsOpen = false;
       ui.confirmReset = false;
       render();
     }
     if (action === "close-options") {
       ui.optionsOpen = false;
       ui.confirmReset = false;
+      render();
+    }
+    if (action === "open-instructions") {
+      ui.instructionsOpen = true;
+      ui.optionsOpen = false;
+      ui.confirmReset = false;
+      render();
+    }
+    if (action === "close-instructions") {
+      ui.instructionsOpen = false;
       render();
     }
     if (action === "toggle-nap") {
@@ -929,6 +1014,10 @@ function drawCatFace(ctx, width, height, visualState, isBlinking) {
     if (hasStarted()) {
       render();
     }
+  });
+
+  window.addEventListener("resize", () => {
+    updateLayoutScale();
   });
 
   window.setInterval(() => {
