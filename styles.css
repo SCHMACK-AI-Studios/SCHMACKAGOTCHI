@@ -22,7 +22,7 @@
   --cream: #f5edd8;
   --shadow: rgba(0, 0, 0, 0.35);
   font-family: 'Press Start 2P', 'Courier New', monospace;
-  font-size: 10px;
+  font-size: 12px;
   line-height: 1.6;
 }
 
@@ -30,9 +30,17 @@
   box-sizing: border-box;
 }
 
+html,
+body,
+#app {
+  width: 100%;
+  height: 100%;
+  overflow: hidden;
+}
+
 body {
-  min-width: 1040px;
-  min-height: 760px;
+  min-width: 0;
+  min-height: 0;
   margin: 0;
   background:
     linear-gradient(90deg, rgba(255,255,255,0.04) 1px, transparent 1px),
@@ -58,7 +66,7 @@ button {
   cursor: pointer;
   min-height: 40px;
   padding: 8px 14px;
-  font-size: 9px;
+  font-size: 11px;
   letter-spacing: 0.05em;
 }
 
@@ -87,7 +95,7 @@ input {
   background: var(--white);
   padding: 10px 12px;
   outline: none;
-  font-size: 9px;
+  font-size: 11px;
 }
 
 input:focus {
@@ -102,9 +110,16 @@ input:focus {
   display: grid;
   place-items: center;
   width: 100vw;
-  min-height: 100vh;
-  padding: 24px;
+  height: 100dvh;
+  min-height: 0;
+  padding: 16px;
   overflow: hidden;
+}
+
+.game-scale-frame {
+  position: relative;
+  width: var(--game-frame-width, 1140px);
+  height: var(--game-frame-height, 900px);
 }
 
 .game-screen {
@@ -113,9 +128,11 @@ input:focus {
   grid-template-columns: minmax(610px, 1fr) 300px;
   grid-template-rows: 90px minmax(0, 1fr) 110px;
   gap: 16px;
-  width: min(1140px, calc(100vw - 48px));
-  height: min(880px, calc(100vh - 48px));
-  min-height: 760px;
+  width: 1140px;
+  height: 880px;
+  min-height: 0;
+  transform: scale(var(--game-scale, 1));
+  transform-origin: top left;
 
   /* Layered border — thick outer black, inner red stripe */
   border: 8px solid var(--ink);
@@ -154,7 +171,7 @@ input:focus {
   align-items: center;
   justify-content: center;
   gap: 20px;
-  font-size: 28px;
+  font-size: 30px;
   letter-spacing: 0.06em;
   line-height: 1;
   color: var(--ink);
@@ -182,7 +199,7 @@ input:focus {
   color: var(--white);
   padding: 5px 10px;
   box-shadow: 3px 3px 0 var(--red);
-  font-size: 8px;
+  font-size: 10px;
   letter-spacing: 0.08em;
   margin-top: 4px;
 }
@@ -279,10 +296,10 @@ input:focus {
   color: var(--white);
   box-shadow: 6px 6px 0 var(--red), 9px 9px 0 var(--ink);
   padding: 42px 18px 16px;
-  font-size: 11px;
+  font-size: 13px;
   overflow: hidden;
-  width: 108px;
-  height: 84px;
+  width: 172px;
+  height: 102px;
   text-align: center;
   letter-spacing: 0.06em;
 }
@@ -291,7 +308,8 @@ input:focus {
   content: "";
   position: absolute;
   top: 8px;
-  left: 36px;
+  left: 50%;
+  transform: translateX(-50%);
   width: 36px;
   height: 36px;
   background: url("assets/schmack-cat.png") center / contain no-repeat;
@@ -447,7 +465,7 @@ input:focus {
 
 .panel-title {
   margin: 0 0 12px;
-  font-size: 11px;
+  font-size: 13px;
   line-height: 1.4;
   letter-spacing: 0.06em;
   border-bottom: 3px solid currentColor;
@@ -461,7 +479,7 @@ input:focus {
   gap: 10px;
   align-items: start;
   line-height: 1.6;
-  font-size: 9px;
+  font-size: 11px;
 }
 
 .task-row {
@@ -471,7 +489,7 @@ input:focus {
 .task-text,
 .achievement-text {
   overflow-wrap: anywhere;
-  font-size: 8.5px;
+  font-size: 10.5px;
   line-height: 1.7;
 }
 
@@ -566,7 +584,7 @@ input:focus {
 
 .toy-shelf-title {
   margin: 14px 0 8px;
-  font-size: 10px;
+  font-size: 12px;
   letter-spacing: 0.06em;
   border-bottom: 2px solid rgba(255,255,255,0.3);
   padding-bottom: 6px;
@@ -615,7 +633,7 @@ input:focus {
   justify-content: space-between;
   gap: 8px;
   margin-bottom: 10px;
-  font-size: 9px;
+  font-size: 11px;
   letter-spacing: 0.06em;
 }
 
@@ -627,26 +645,40 @@ input:focus {
 
 .heart {
   position: relative;
-  width: 26px;
+  width: 30px;
   height: 24px;
   border: 0;
   background: var(--ink);
   clip-path: polygon(
-    12.5% 0,   37.5% 0,
-    37.5% 12.5%, 50% 12.5%,
-    50% 25%,   62.5% 25%,
-    62.5% 12.5%, 75% 12.5%,
-    75% 0,     87.5% 0,
-    87.5% 12.5%, 100% 12.5%,
-    100% 50%,  87.5% 50%,
-    87.5% 62.5%, 75% 62.5%,
-    75% 75%,   62.5% 75%,
-    62.5% 87.5%, 50% 87.5%,
-    50% 100%,  37.5% 100%,
-    37.5% 87.5%, 25% 87.5%,
-    25% 75%,   12.5% 75%,
-    12.5% 62.5%, 0 62.5%,
-    0 12.5%,   12.5% 12.5%
+    10% 0,
+    36.667% 0,
+    36.667% 12.5%,
+    50% 12.5%,
+    63.333% 12.5%,
+    63.333% 0,
+    90% 0,
+    90% 12.5%,
+    100% 12.5%,
+    100% 50%,
+    90% 50%,
+    90% 62.5%,
+    80% 62.5%,
+    80% 75%,
+    70% 75%,
+    70% 87.5%,
+    56.667% 87.5%,
+    56.667% 100%,
+    43.333% 100%,
+    43.333% 87.5%,
+    30% 87.5%,
+    30% 75%,
+    20% 75%,
+    20% 62.5%,
+    10% 62.5%,
+    10% 50%,
+    0 50%,
+    0 12.5%,
+    10% 12.5%
   );
 }
 
@@ -666,27 +698,43 @@ input:focus {
   background: rgba(255,255,255,0.4);
 }
 
-/* ===== OPTIONS BUTTON ===== */
+/* ===== BOTTOM ACTIONS ===== */
 
-.options-button {
-  position: static;
+.bottom-actions {
   grid-column: 2;
   grid-row: 3;
   align-self: end;
   justify-self: end;
   z-index: 6;
+  display: flex;
+  align-items: flex-end;
+  gap: 8px;
+}
+
+.options-button,
+.instructions-button {
+  position: static;
   background: var(--red);
   color: var(--white);
   border-color: var(--ink);
-  width: 110px;
-  min-height: 60px;
-  font-size: 10px;
+  min-height: 64px;
+  font-size: 12px;
   letter-spacing: 0.06em;
   box-shadow: 5px 5px 0 var(--ink);
 }
 
+.instructions-button {
+  width: 192px;
+}
+
+.options-button {
+  width: 124px;
+}
+
 .options-button:hover,
-.options-button:focus-visible {
+.options-button:focus-visible,
+.instructions-button:hover,
+.instructions-button:focus-visible {
   background: var(--red-dark);
   color: var(--white);
 }
@@ -704,10 +752,10 @@ input:focus {
   transition: left 450ms steps(3), top 450ms steps(3);
 }
 
-.spot-0 { left: 49%; top: 55%; }
-.spot-1 { left: 45%; top: 55%; }
-.spot-2 { left: 53%; top: 55%; }
-.sleeping-spot { left: 51%; top: 54%; }
+.spot-0 { left: 49%; top: 58%; }
+.spot-1 { left: 45%; top: 58%; }
+.spot-2 { left: 53%; top: 58%; }
+.sleeping-spot { left: 51%; top: 57%; }
 
 .cat {
   position: absolute;
@@ -826,7 +874,7 @@ input:focus {
   left: 106px; top: 0;
   z-index: 8;
   color: var(--red);
-  font-size: 10px;
+  font-size: 12px;
   font-weight: bold;
   text-shadow: 2px 2px 0 var(--white);
   animation: z-float 1200ms steps(3) infinite;
@@ -838,47 +886,43 @@ input:focus {
 
 .bowl {
   position: absolute;
-  bottom: 72px;
-  width: 84px;
-  height: 44px;
-  border: 5px solid var(--ink);
-  border-radius: 2px 2px 22px 22px;
-  background: var(--red);
-  box-shadow: 5px 5px 0 var(--ink);
+  bottom: 92px;
+  width: 96px;
+  height: 53px;
+  background: url("assets/pet-bowl-sprite.png") center / contain no-repeat;
+  image-rendering: pixelated;
 }
 
 .bowl::before {
-  content: "";
-  position: absolute;
-  left: 10px; right: 10px; top: 6px;
-  height: 14px;
-  border: 3px solid var(--ink);
-  border-radius: 12px;
-  background: var(--white);
+  content: none;
 }
 
 .bowl-label {
   position: absolute;
-  left: 5px; right: 5px; bottom: 2px;
+  left: 13px; right: 13px; bottom: 9px;
+  z-index: 2;
   overflow: hidden;
+  background: var(--white);
+  color: var(--ink);
   text-align: center;
   white-space: nowrap;
-  font-size: 7px;
+  font-size: 9px;
   line-height: 1;
 }
 
-.food-bowl { left: 188px; }
-.water-bowl { left: 284px; background: var(--blue); }
+.food-bowl { left: 178px; }
+.water-bowl { left: 286px; }
 
 .food-bits,
 .water-fill {
   position: absolute;
-  top: 14px; left: 22px;
-  width: 38px; height: 9px;
+  top: 15px; left: 29px;
+  width: 39px; height: 9px;
   opacity: 0;
 }
 
 .food-bits {
+  z-index: 2;
   background: linear-gradient(
     90deg,
     #a36534 0 7px, transparent 7px 11px,
@@ -888,8 +932,7 @@ input:focus {
 }
 
 .water-fill {
-  background: var(--blue-mid);
-  opacity: 1;
+  display: none;
 }
 
 .has-food .food-bits { opacity: 1; }
@@ -898,7 +941,7 @@ input:focus {
 
 .room-toys {
   position: absolute;
-  left: 248px; right: 218px; bottom: 52px;
+  left: 248px; right: 218px; bottom: 26px;
   display: flex;
   justify-content: center;
   gap: 12px;
@@ -911,99 +954,66 @@ input:focus {
 .toy-icon {
   position: relative;
   display: inline-block;
-  width: 42px; height: 36px;
+  flex: 0 0 auto;
   image-rendering: pixelated;
+  background-position: center;
+  background-repeat: no-repeat;
+  background-size: contain;
 }
 
-.toy-icon.large { width: 84px; height: 72px; }
-
-.toy-teaser::before {
-  content: "";
-  position: absolute;
-  left: 8px; top: 24px;
-  width: 32px; height: 5px;
-  background: var(--ink);
-  transform: rotate(-25deg);
+.toy-teaser {
+  width: 30px;
+  height: 44px;
+  background-image: url("assets/toy-cat-teaser-feather.png");
 }
 
-.toy-teaser::after {
-  content: "";
-  position: absolute;
-  right: 2px; top: 4px;
-  width: 18px; height: 22px;
-  background: linear-gradient(90deg, var(--red) 0 8px, var(--white) 8px 13px, var(--blue) 13px 18px);
-  border: 3px solid var(--ink);
+.toy-fish {
+  width: 50px;
+  height: 31px;
+  background-image: url("assets/toy-fish-plush.png");
 }
 
-.toy-fish::before {
-  content: "";
-  position: absolute;
-  left: 7px; top: 11px;
-  width: 25px; height: 15px;
-  background: #4aa7dc;
-  border: 3px solid var(--ink);
+.toy-ball {
+  width: 36px;
+  height: 36px;
+  background-image: url("assets/toy-small-ball.png");
 }
 
-.toy-fish::after {
-  content: "";
-  position: absolute;
-  right: 1px; top: 12px;
-  width: 14px; height: 14px;
-  background: #4aa7dc;
-  border: 3px solid var(--ink);
-  transform: rotate(45deg);
+.toy-mouse {
+  width: 50px;
+  height: 34px;
+  background-image: url("assets/toy-mouse-plush.png");
 }
 
-.toy-ball::before {
-  content: "";
-  position: absolute;
-  left: 8px; top: 5px;
-  width: 26px; height: 26px;
-  border: 4px solid var(--ink);
-  background: linear-gradient(90deg, var(--red) 0 50%, var(--white) 50% 100%);
+.toy-tunnel {
+  width: 48px;
+  height: 40px;
+  background-image: url("assets/toy-cat-tunnel.png");
 }
 
-.toy-mouse::before {
-  content: "";
-  position: absolute;
-  left: 7px; top: 13px;
-  width: 26px; height: 16px;
-  border: 3px solid var(--ink);
-  background: #b9b0c8;
+.toy-icon.large.toy-teaser {
+  width: 58px;
+  height: 88px;
 }
 
-.toy-mouse::after {
-  content: "";
-  position: absolute;
-  left: 2px; top: 7px;
-  width: 12px; height: 12px;
-  border: 3px solid var(--ink);
-  background: #b9b0c8;
+.toy-icon.large.toy-fish {
+  width: 112px;
+  height: 70px;
 }
 
-.toy-tunnel::before {
-  content: "";
-  position: absolute;
-  left: 5px; top: 8px;
-  width: 32px; height: 22px;
-  border: 4px solid var(--ink);
-  background: #75c06b;
+.toy-icon.large.toy-ball {
+  width: 78px;
+  height: 78px;
 }
 
-.toy-tunnel::after {
-  content: "";
-  position: absolute;
-  left: 15px; top: 16px;
-  width: 12px; height: 14px;
-  border: 4px solid var(--ink);
-  border-bottom: 0;
-  background: var(--floor);
+.toy-icon.large.toy-mouse {
+  width: 112px;
+  height: 76px;
 }
 
-.toy-icon.large::before,
-.toy-icon.large::after {
-  transform-origin: center;
-  scale: 1.8;
+.toy-icon.large.toy-tunnel {
+  width: 96px;
+  height: 80px;
 }
 
 /* ===== REWARD POP ===== */
@@ -1029,7 +1039,7 @@ input:focus {
   animation: reward-pop 1200ms steps(5) forwards;
   padding: 18px;
   text-align: center;
-  font-size: 9px;
+  font-size: 11px;
 }
 
 .food-can {
@@ -1058,7 +1068,7 @@ input:focus {
   border: 3px solid var(--ink);
   background: var(--white);
   padding: 5px 2px;
-  font-size: 8px;
+  font-size: 10px;
 }
 
 /* ===== OPTIONS MENU ===== */
@@ -1075,15 +1085,21 @@ input:focus {
 .menu-dialog {
   width: 420px;
   max-width: calc(100vw - 60px);
+  max-height: calc(100% - 80px);
+  overflow: auto;
   border: 6px solid var(--ink);
   background: var(--cream);
   box-shadow: 10px 10px 0 var(--red), 14px 14px 0 var(--ink);
   padding: 20px;
 }
 
+.instructions-dialog {
+  width: 520px;
+}
+
 .menu-dialog h2 {
   margin: 0 0 16px;
-  font-size: 16px;
+  font-size: 18px;
   letter-spacing: 0.06em;
   text-shadow: 3px 3px 0 var(--red);
 }
@@ -1096,14 +1112,14 @@ input:focus {
 
 .menu-section h3 {
   margin: 0 0 8px;
-  font-size: 11px;
+  font-size: 13px;
   letter-spacing: 0.06em;
 }
 
 .menu-section p {
   margin: 0 0 12px;
   line-height: 1.6;
-  font-size: 8.5px;
+  font-size: 10.5px;
 }
 
 .menu-actions {
@@ -1121,10 +1137,13 @@ input:focus {
 /* ===== WELCOME SCREEN ===== */
 
 .welcome-screen {
+  width: 100vw;
+  height: 100dvh;
   min-height: 100vh;
   display: grid;
   place-items: center;
   padding: 32px;
+  overflow: auto;
 }
 
 .welcome-device {
@@ -1149,7 +1168,7 @@ input:focus {
 
 .welcome-inner h1 {
   margin: 0 0 18px;
-  font-size: 24px;
+  font-size: 26px;
   line-height: 1.2;
   text-shadow: 4px 4px 0 var(--red), 6px 6px 0 var(--ink);
   letter-spacing: 0.04em;
@@ -1159,7 +1178,7 @@ input:focus {
   max-width: 54ch;
   margin: 0 0 18px;
   line-height: 1.8;
-  font-size: 9px;
+  font-size: 11px;
 }
 
 .setup-cat-preview {
@@ -1181,14 +1200,14 @@ input:focus {
 .field label {
   display: block;
   margin-bottom: 8px;
-  font-size: 9px;
+  font-size: 11px;
   letter-spacing: 0.06em;
 }
 
 .form-error {
   min-height: 20px;
   color: var(--red);
-  font-size: 9px;
+  font-size: 11px;
   font-weight: bold;
 }
 
@@ -1200,6 +1219,11 @@ input:focus {
 .edit-actions {
   display: flex;
   gap: 10px;
+}
+
+.edit-actions button {
+  background: var(--red);
+  color: var(--white);
 }
 
 .sr-only {
@@ -1272,17 +1296,4 @@ input:focus {
   0%      { transform: translateY(30px) scale(0.7); opacity: 0; }
   20%, 70% { transform: translateY(0) scale(1); opacity: 1; }
   100%    { transform: translateY(-22px) scale(1); opacity: 0; }
-}
-
-/* ===== RESPONSIVE ===== */
-
-@media (max-width: 1100px) {
-  body { min-width: 760px; }
-
-  .game-screen {
-    grid-template-columns: 210px minmax(360px, 1fr) 260px;
-    gap: 12px;
-  }
-
-  .title-block h1 { font-size: 20px; }
 }
