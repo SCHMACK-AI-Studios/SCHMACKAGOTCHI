@@ -346,75 +346,14 @@ input:focus {
 
 .cat-tree {
   position: absolute;
-  right: 50px;
-  bottom: 110px;
-  width: 108px;
-  height: 180px;
+  right: 46px;
+  bottom: 124px;
+  z-index: 2;
+  width: 112px;
+  height: 216px;
+  background: url("assets/cat-tree-sprite.png") center / contain no-repeat;
+  image-rendering: pixelated;
   pointer-events: none;
-}
-
-.tree-post,
-.tree-platform,
-.tree-base {
-  position: absolute;
-  border: 4px solid var(--ink);
-}
-
-.tree-post {
-  width: 18px;
-  background:
-    repeating-linear-gradient(0deg, #f0ead0 0 8px, #8c7a50 8px 12px);
-}
-
-.tree-post.tall {
-  left: 52px;
-  top: 28px;
-  height: 128px;
-}
-
-.tree-post.short {
-  left: 22px;
-  top: 76px;
-  height: 80px;
-}
-
-.tree-platform {
-  height: 24px;
-  background: var(--red);
-  box-shadow: 4px 4px 0 var(--ink);
-}
-
-.tree-platform.top {
-  left: 40px;
-  top: 8px;
-  width: 62px;
-}
-
-.tree-platform.middle {
-  left: 2px;
-  top: 62px;
-  width: 72px;
-}
-
-.tree-base {
-  left: 10px;
-  bottom: 0;
-  width: 88px;
-  height: 30px;
-  background: var(--ink);
-  box-shadow: 4px 4px 0 var(--ink);
-}
-
-.tree-base::after {
-  content: "";
-  position: absolute;
-  left: 26px;
-  bottom: 0;
-  width: 24px;
-  height: 20px;
-  background: var(--white);
-  border: 4px solid var(--ink);
-  border-bottom: 0;
 }
 
 /* ===== SIDE PANEL ===== */
@@ -889,7 +828,9 @@ input:focus {
   bottom: 92px;
   width: 96px;
   height: 53px;
-  background: url("assets/pet-bowl-sprite.png") center / contain no-repeat;
+  background-position: center;
+  background-repeat: no-repeat;
+  background-size: contain;
   image-rendering: pixelated;
 }
 
@@ -910,8 +851,15 @@ input:focus {
   line-height: 1;
 }
 
-.food-bowl { left: 178px; }
-.water-bowl { left: 286px; }
+.food-bowl {
+  left: 178px;
+  background-image: url("assets/pet-bowl-food-sprite.png");
+}
+
+.water-bowl {
+  left: 286px;
+  background-image: url("assets/pet-bowl-water-sprite.png");
+}
 
 .food-bits,
 .water-fill {
@@ -941,7 +889,7 @@ input:focus {
 
 .room-toys {
   position: absolute;
-  left: 248px; right: 218px; bottom: 26px;
+  left: 248px; right: 218px; bottom: 18px;
   display: flex;
   justify-content: center;
   gap: 12px;
