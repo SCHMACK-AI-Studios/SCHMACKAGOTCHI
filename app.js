@@ -119,6 +119,7 @@ function drawCatFace(ctx, width, height, visualState, isBlinking) {
     fill(ink, 39, 79, 4, 8);
     fill(ink, 43, 86, 6, 3);
     fill(ink, 49, 89, 6, 3);
+    fill(ink, 55, 91, 10, 2);
     fill(ink, 65, 89, 6, 3);
     fill(ink, 69, 86, 6, 3);
     fill(ink, 76, 79, 4, 8);
@@ -541,11 +542,8 @@ function drawCatFace(ctx, width, height, visualState, isBlinking) {
     if (state.catNapActive || !isAwakeAt(ui.now)) {
       return "sleeping";
     }
-    if (state.hunger === 0) {
+    if (state.hunger <= 1) {
       return "grumpy";
-    }
-    if (state.happiness === 0) {
-      return "sad";
     }
     return "happy";
   }
@@ -620,13 +618,7 @@ function drawCatFace(ctx, width, height, visualState, isBlinking) {
         <div class="room">
           <div class="window" aria-hidden="true"></div>
           <div class="poster">SCHMACK</div>
-          <div class="cat-tree" aria-hidden="true">
-            <span class="tree-post tall"></span>
-            <span class="tree-post short"></span>
-            <span class="tree-platform top"></span>
-            <span class="tree-platform middle"></span>
-            <span class="tree-base"></span>
-          </div>
+          <div class="cat-tree" aria-hidden="true"></div>
           <div class="rug"></div>
           ${renderCat()}
           <div class="room-toys">${roomToys}</div>
